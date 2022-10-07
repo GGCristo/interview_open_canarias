@@ -1,10 +1,17 @@
 mod person;
 
-use person::{doctor, patient};
+use person::{doctor, patient, Person};
 
-fn print_all_age(persons: &Vec<Box<dyn person::PersonTrait>>) {
-    for person in persons {
-        println!("Age {}", person.get_age());
+// fn print_all_age(persons: &Vec<Box<dyn person::PersonTrait>>) {
+//     for person in persons {
+//         println!("Age {}", person.get_age());
+//     }
+// }
+
+fn print_age(person: Person) {
+    match person {
+        Person::Patient(p) => println!("{:?}", p.get_notes()),
+        Person::Doctor(d) => println!("{:?}", d.get_specialty()),
     }
 }
 
@@ -23,8 +30,9 @@ fn main() {
         person::Gender::Male,
         doctor::Specialty::Osteopaths,
     );
-    let mut v = Vec::<Box<dyn person::PersonTrait>>::with_capacity(2);
-    v.push(Box::new(maria));
-    v.push(Box::new(pepe));
-    print_all_age(&v);
+    print_age(maria);
+    print_age(pepe);
+    // v.push(Box::new(maria));
+    // v.push(Box::new(pepe));
+    // print_all_age(&v);
 }
