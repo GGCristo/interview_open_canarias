@@ -25,11 +25,6 @@ pub struct PersonS<T> {
     kind: T,
 }
 
-pub enum Person {
-    Patient(PersonS<patient::Patient>),
-    Doctor(PersonS<doctor::Doctor>),
-}
-
 fn new<T>(name: String, age: i32, gender: Gender, condition: Condition, kind: T) -> PersonS<T> {
     PersonS {
         name,
@@ -38,6 +33,11 @@ fn new<T>(name: String, age: i32, gender: Gender, condition: Condition, kind: T)
         condition,
         kind,
     }
+}
+
+pub enum Person {
+    Patient(PersonS<patient::Patient>),
+    Doctor(PersonS<doctor::Doctor>),
 }
 
 impl Person {
