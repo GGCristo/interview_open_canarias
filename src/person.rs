@@ -17,7 +17,7 @@ pub enum Condition {
     CriticalCondition,
 }
 
-struct Person {
+pub struct Person {
     name: String,
     age: i32,
     gender: Gender,
@@ -25,8 +25,17 @@ struct Person {
 }
 
 pub trait PersonTrait {
-    fn get_name(&self) -> &String;
-    fn get_age(&self) -> i32;
-    fn get_gender(&self) -> Gender;
-    fn get_status(&self) -> Condition;
+    fn get_person(&self) -> &Person;
+    fn get_name(&self) -> &String {
+        &self.get_person().name
+    }
+    fn get_age(&self) -> i32 {
+        self.get_person().age
+    }
+    fn get_gender(&self) -> Gender {
+        self.get_person().gender
+    }
+    fn get_status(&self) -> Condition {
+        self.get_person().condition
+    }
 }

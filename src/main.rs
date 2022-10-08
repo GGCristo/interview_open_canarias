@@ -1,6 +1,7 @@
 mod person;
+mod registry;
 
-use person::{doctor, patient};
+use person::{doctor, patient, PersonTrait};
 
 fn print_all_age(persons: &Vec<Box<dyn person::PersonTrait>>) {
     for person in persons {
@@ -11,7 +12,7 @@ fn print_all_age(persons: &Vec<Box<dyn person::PersonTrait>>) {
 const AGE: i32 = 22;
 fn main() {
     let maria = patient::new(
-        "maria".to_string(),
+        "Maria".to_string(),
         AGE,
         person::Gender::Female,
         person::Condition::GoodCondition,
@@ -23,6 +24,7 @@ fn main() {
         person::Gender::Male,
         doctor::Specialty::Osteopaths,
     );
+    println!("Age {}", maria.get_age());
     let mut v = Vec::<Box<dyn person::PersonTrait>>::with_capacity(2);
     v.push(Box::new(maria));
     v.push(Box::new(pepe));

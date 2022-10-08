@@ -28,16 +28,7 @@ impl Patient {
 }
 
 impl super::PersonTrait for Patient {
-    fn get_name(&self) -> &String {
-        &self.person.name
-    }
-    fn get_age(&self) -> i32 {
-        self.person.age
-    }
-    fn get_gender(&self) -> super::Gender {
-        self.person.gender
-    }
-    fn get_status(&self) -> super::Condition {
-        self.person.condition
+    fn get_person(&self) -> &super::Person {
+        &self.person
     }
 }
