@@ -40,17 +40,29 @@ fn new<T>(name: String, age: i32, gender: Gender, condition: Condition, kind: T)
     }
 }
 
-impl<T> PersonS<T> {
+impl Person {
     pub fn get_name(&self) -> &String {
-        &self.name
+        match self {
+            Person::Patient(p) => &p.name,
+            Person::Doctor(d) => &d.name,
+        }
     }
     pub fn get_age(&self) -> i32 {
-        self.age
+        match self {
+            Person::Patient(p) => p.age,
+            Person::Doctor(d) => d.age,
+        }
     }
     pub fn get_gender(&self) -> Gender {
-        self.gender
+        match self {
+            Person::Patient(p) => p.gender,
+            Person::Doctor(d) => d.gender,
+        }
     }
     pub fn get_status(&self) -> Condition {
-        self.condition
+        match self {
+            Person::Patient(p) => p.condition,
+            Person::Doctor(d) => d.condition,
+        }
     }
 }

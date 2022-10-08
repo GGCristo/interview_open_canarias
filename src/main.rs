@@ -8,7 +8,7 @@ use person::{doctor, patient, Person};
 //     }
 // }
 
-fn print_age(person: Person) {
+fn foo(person: Person) {
     match person {
         Person::Patient(p) => println!("{:?}", p.get_notes()),
         Person::Doctor(d) => println!("{:?}", d.get_specialty()),
@@ -30,8 +30,8 @@ fn main() {
         person::Gender::Male,
         doctor::Specialty::Osteopaths,
     );
-    print_age(maria);
-    print_age(pepe);
+    foo(maria);
+    foo(pepe);
     // v.push(Box::new(maria));
     // v.push(Box::new(pepe));
     // print_all_age(&v);
