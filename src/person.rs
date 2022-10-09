@@ -17,25 +17,52 @@ pub enum Condition {
     CriticalCondition,
 }
 
-pub struct Person {
+pub struct PersonS<T> {
     name: String,
     age: i32,
     gender: Gender,
     condition: Condition,
+    kind: T,
 }
 
-pub trait PersonTrait {
-    fn get_person(&self) -> &Person;
-    fn get_name(&self) -> &String {
-        &self.get_person().name
+fn new<T>(name: String, age: i32, gender: Gender, condition: Condition, kind: T) -> PersonS<T> {
+    PersonS {
+        name,
+        age,
+        gender,
+        condition,
+        kind,
     }
-    fn get_age(&self) -> i32 {
-        self.get_person().age
+}
+
+pub enum Person {
+    Patient(PersonS<patient::Patient>),
+    Doctor(PersonS<doctor::Doctor>),
+}
+
+impl Person {
+    pub fn get_name(&self) -> &String {
+        match self {
+            Person::Patient(p) => &p.name,
+            Person::Doctor(d) => &d.name,
+        }
     }
-    fn get_gender(&self) -> Gender {
-        self.get_person().gender
+    pub fn get_age(&self) -> i32 {
+        match self {
+            Person::Patient(p) => p.age,
+            Person::Doctor(d) => d.age,
+        }
     }
-    fn get_status(&self) -> Condition {
-        self.get_person().condition
+    pub fn get_gender(&self) -> Gender {
+        match self {
+            Person::Patient(p) => p.gender,
+            Person::Doctor(d) => d.gender,
+        }
+    }
+    pub fn get_status(&self) -> Condition {
+        match self {
+            Person::Patient(p) => p.condition,
+            Person::Doctor(d) => d.condition,
+        }
     }
 }

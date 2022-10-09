@@ -1,6 +1,5 @@
 pub struct Patient {
     notes: Vec<String>,
-    person: super::Person,
 }
 
 pub fn new(
@@ -9,26 +8,12 @@ pub fn new(
     gender: super::Gender,
     condition: super::Condition,
     notes: Vec<String>,
-) -> Patient {
-    Patient {
-        person: super::Person {
-            name,
-            age,
-            gender,
-            condition,
-        },
-        notes,
-    }
+) -> super::Person {
+    super::Person::Patient(super::new(name, age, gender, condition, Patient { notes }))
 }
 
-impl Patient {
+impl super::PersonS<Patient> {
     pub fn get_notes(&self) -> &Vec<String> {
-        &self.notes
-    }
-}
-
-impl super::PersonTrait for Patient {
-    fn get_person(&self) -> &super::Person {
-        &self.person
+        &self.kind.notes
     }
 }
