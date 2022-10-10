@@ -9,8 +9,8 @@ impl Patient {
         gender: super::Gender,
         condition: super::Condition,
         notes: Vec<String>,
-    ) -> Result<super::PersonE, String> {
-        Ok(super::PersonE::Patient(super::Person::new(
+    ) -> Result<super::PersonEnum, String> {
+        Ok(super::PersonEnum::Patient(super::Person::new(
             name,
             age,
             gender,

@@ -25,8 +25,8 @@ impl Doctor {
         age: i32,
         gender: super::Gender,
         specialty: Specialty,
-    ) -> Result<super::PersonE, String> {
-        Ok(super::PersonE::Doctor(super::Person::new(
+    ) -> Result<super::PersonEnum, String> {
+        Ok(super::PersonEnum::Doctor(super::Person::new(
             name,
             age,
             gender,

@@ -20,40 +20,40 @@ pub enum Condition {
     CriticalCondition,
 }
 
-pub enum PersonE {
+pub enum PersonEnum {
     Patient(Person<patient::Patient>),
     Doctor(Person<doctor::Doctor>),
 }
 
-impl PersonE {
+impl PersonEnum {
     pub fn get_name(&self) -> &String {
         match self {
-            PersonE::Patient(p) => &p.name,
-            PersonE::Doctor(d) => &d.name,
+            PersonEnum::Patient(p) => &p.name,
+            PersonEnum::Doctor(d) => &d.name,
         }
     }
     pub fn get_age(&self) -> i32 {
         match self {
-            PersonE::Patient(p) => p.age,
-            PersonE::Doctor(d) => d.age,
+            PersonEnum::Patient(p) => p.age,
+            PersonEnum::Doctor(d) => d.age,
         }
     }
     pub fn get_gender(&self) -> Gender {
         match self {
-            PersonE::Patient(p) => p.gender,
-            PersonE::Doctor(d) => d.gender,
+            PersonEnum::Patient(p) => p.gender,
+            PersonEnum::Doctor(d) => d.gender,
         }
     }
     pub fn get_status(&self) -> Condition {
         match self {
-            PersonE::Patient(p) => p.condition,
-            PersonE::Doctor(d) => d.condition,
+            PersonEnum::Patient(p) => p.condition,
+            PersonEnum::Doctor(d) => d.condition,
         }
     }
     pub fn get_mrn(&self) -> &MRN {
         match self {
-            PersonE::Patient(p) => &p.mrn,
-            PersonE::Doctor(d) => &d.mrn,
+            PersonEnum::Patient(p) => &p.mrn,
+            PersonEnum::Doctor(d) => &d.mrn,
         }
     }
 }

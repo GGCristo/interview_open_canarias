@@ -2,15 +2,15 @@ mod person;
 mod registry;
 mod utils;
 
-use person::{doctor, doctor::Doctor, patient::Patient, PersonE};
+use person::{doctor, doctor::Doctor, patient::Patient, PersonEnum};
 use utils::num_generator::NumGenerator;
 
-fn print_all_age(persons: &Vec<PersonE>) {
+fn print_all_age(persons: &Vec<PersonEnum>) {
     for person in persons {
         println!("Age {}", person.get_age());
         match person {
-            PersonE::Doctor(d) => println!("Specialty: {:?}", d.get_specialty()),
-            PersonE::Patient(p) => println!("Notes: {:?}", p.get_notes()),
+            PersonEnum::Doctor(d) => println!("Specialty: {:?}", d.get_specialty()),
+            PersonEnum::Patient(p) => println!("Notes: {:?}", p.get_notes()),
         }
     }
 }

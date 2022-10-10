@@ -1,4 +1,4 @@
-use crate::person::PersonE;
+use crate::person::PersonEnum;
 use std::collections::{hash_map, HashMap};
 use std::fmt;
 
@@ -6,7 +6,7 @@ use std::fmt;
 pub use String as MRN;
 
 pub struct Registry {
-    registy: HashMap<MRN, PersonE>,
+    registy: HashMap<MRN, PersonEnum>,
 }
 
 pub fn new() -> Registry {
@@ -16,7 +16,7 @@ pub fn new() -> Registry {
 }
 
 impl Registry {
-    pub fn add(&mut self, person: PersonE) -> Result<&PersonE, String> {
+    pub fn add(&mut self, person: PersonEnum) -> Result<&PersonEnum, String> {
         match self.registy.entry(person.get_mrn().clone()) {
             hash_map::Entry::Vacant(v) => Ok(v.insert(person)),
             hash_map::Entry::Occupied(o) => Err(format!(
