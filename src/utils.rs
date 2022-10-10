@@ -1,1 +1,1 @@
-pub mod num_Generator;
+pub mod num_generator;

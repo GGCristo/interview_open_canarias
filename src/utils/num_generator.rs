@@ -6,25 +6,24 @@ pub struct NumGenerator {
     freed_numbers: VecDeque<String>,
 }
 
-pub fn new(size: usize) -> NumGenerator {
-    NumGenerator {
-        number: 0,
-        size,
-        freed_numbers: VecDeque::new(),
-    }
-}
-
 impl Default for NumGenerator {
     fn default() -> Self {
         NumGenerator {
             number: 0,
-            size: 16,
+            size: 9,
             freed_numbers: VecDeque::new(),
         }
     }
 }
 
 impl NumGenerator {
+    pub fn new(size: usize) -> Self {
+        NumGenerator {
+            number: 0,
+            size,
+            freed_numbers: VecDeque::new(),
+        }
+    }
     pub fn next(&mut self) -> Option<String> {
         if !self.freed_numbers.is_empty() {
             return Some(self.freed_numbers.pop_front().unwrap());

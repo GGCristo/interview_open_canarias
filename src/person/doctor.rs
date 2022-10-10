@@ -19,24 +19,24 @@ pub struct Doctor {
     specialty: Specialty,
 }
 
-pub fn new(
-    name: String,
-    age: i32,
-    gender: super::Gender,
-    specialty: Specialty,
-    num_generator: &mut super::NumGenerator,
-) -> super::Person {
-    super::Person::Doctor(super::new(
-        name,
-        age,
-        gender,
-        super::Condition::Employee,
-        Doctor { specialty },
-        num_generator,
-    ))
+impl Doctor {
+    pub fn new(
+        name: String,
+        age: i32,
+        gender: super::Gender,
+        specialty: Specialty,
+    ) -> Result<super::PersonE, String> {
+        Ok(super::PersonE::Doctor(super::Person::new(
+            name,
+            age,
+            gender,
+            super::Condition::Employee,
+            Doctor { specialty },
+        )?))
+    }
 }
 
-impl super::PersonS<Doctor> {
+impl super::Person<Doctor> {
     pub fn get_specialty(&self) -> Specialty {
         self.kind.specialty
     }
