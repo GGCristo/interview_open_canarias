@@ -3,15 +3,18 @@ pub mod patient;
 
 use crate::registry::MRN;
 use crate::utils::num_generator::NumGenerator;
+use once_cell::sync::Lazy;
+use std::fmt;
+use std::sync::Mutex;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum Gender {
     Male,
     Female,
     Other,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum Condition {
     Employee,
     GoodCondition,
@@ -44,7 +47,7 @@ impl PersonEnum {
             PersonEnum::Doctor(d) => d.gender,
         }
     }
-    pub fn get_status(&self) -> Condition {
+    pub fn get_condition(&self) -> Condition {
         match self {
             PersonEnum::Patient(p) => p.condition,
             PersonEnum::Doctor(d) => d.condition,
@@ -58,8 +61,28 @@ impl PersonEnum {
     }
 }
 
-use once_cell::sync::Lazy;
-use std::sync::Mutex;
+impl fmt::Display for PersonEnum {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut result = format!(
+            "MRN: {}\nName: {}\nAge: {}\nGender: {:?}\nCondition: {:?}\n",
+            self.get_mrn(),
+            self.get_name(),
+            self.get_age(),
+            self.get_gender(),
+            self.get_condition()
+        );
+        match self {
+            PersonEnum::Doctor(d) => {
+                result.push_str(&format!("Specialty: {:?}\n", d.get_specialty()));
+            }
+            PersonEnum::Patient(p) => {
+                result.push_str(&format!("Notes: {:?}\n", p.get_notes()));
+            }
+        }
+        write!(f, "{result}")
+    }
+}
+
 static NUM_GEN: Lazy<Mutex<NumGenerator>> = Lazy::new(|| Mutex::new(NumGenerator::default()));
 
 pub struct Person<T> {
@@ -97,6 +120,6 @@ impl<T> Person<T> {
 
 impl<T> Drop for Person<T> {
     fn drop(&mut self) {
-        println!("Calling drop with {}", self.name);
+        NUM_GEN.lock().unwrap().free(self.mrn.clone());
     }
 }

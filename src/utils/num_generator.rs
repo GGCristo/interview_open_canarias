@@ -8,11 +8,7 @@ pub struct NumGenerator {
 
 impl Default for NumGenerator {
     fn default() -> Self {
-        NumGenerator {
-            number: 0,
-            size: 9,
-            freed_numbers: VecDeque::new(),
-        }
+        NumGenerator::new(9)
     }
 }
 

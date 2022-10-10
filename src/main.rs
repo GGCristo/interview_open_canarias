@@ -2,39 +2,35 @@ mod person;
 mod registry;
 mod utils;
 
-use person::{doctor, doctor::Doctor, patient::Patient, PersonEnum};
-use utils::num_generator::NumGenerator;
+use person::{doctor, doctor::Doctor, patient::Patient};
+use std::error::Error;
 
-fn print_all_age(persons: &Vec<PersonEnum>) {
-    for person in persons {
-        println!("Age {}", person.get_age());
-        match person {
-            PersonEnum::Doctor(d) => println!("Specialty: {:?}", d.get_specialty()),
-            PersonEnum::Patient(p) => println!("Notes: {:?}", p.get_notes()),
-        }
-    }
-}
-
-const AGE: i32 = 22;
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let mut registry = registry::new();
     let maria = Patient::new(
         "Maria".to_string(),
-        AGE,
+        22,
         person::Gender::Female,
         person::Condition::GoodCondition,
-        vec!["note1".to_string(), "note2".to_string()],
-    ).unwrap();
+        Vec::new(),
+    )?;
+    let maria_mrn = registry.add(maria)?.get_mrn().clone();
+    registry.remove(&maria_mrn)?;
     let pepe = Doctor::new(
         "Pepe".to_string(),
-        AGE + 1,
+        23,
         person::Gender::Male,
         doctor::Specialty::Osteopaths,
-    ).unwrap();
-    if let Err(e) = registry.add(maria) {
-        print!("{e}");
-    }
-    if let Err(e) = registry.add(pepe) {
-        print!("{e}");
-    }
+    )?;
+    let matilde = Patient::new(
+        "Matilde".to_string(),
+        34,
+        person::Gender::Other,
+        person::Condition::SeriousIllness,
+        vec!["note1".to_string(), "note2".to_string()],
+    )?;
+    registry.add(pepe)?;
+    registry.add(matilde)?;
+    println!("Registry: {registry}");
+    Ok(())
 }
