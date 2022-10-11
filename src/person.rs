@@ -14,15 +14,6 @@ pub enum Gender {
     Other,
 }
 
-#[derive(Copy, Clone, Debug)]
-pub enum Condition {
-    Employee,
-    GoodCondition,
-    SlightIllness,
-    SeriousIllness,
-    CriticalCondition,
-}
-
 pub enum Person {
     Patient(PersonS<patient::Patient>),
     Doctor(PersonS<doctor::Doctor>),
@@ -47,12 +38,6 @@ impl Person {
             Person::Doctor(d) => d.gender,
         }
     }
-    pub fn get_condition(&self) -> Condition {
-        match self {
-            Person::Patient(p) => p.condition,
-            Person::Doctor(d) => d.condition,
-        }
-    }
     pub fn get_mrn(&self) -> &MRN {
         match self {
             Person::Patient(p) => &p.mrn,
@@ -64,19 +49,18 @@ impl Person {
 impl fmt::Display for Person {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut result = format!(
-            "MRN: {}\nName: {}\nAge: {}\nGender: {:?}\nCondition: {:?}\n",
+            "MRN: {}\nName: {}\nAge: {}\nGender: {:?}\n",
             self.get_mrn(),
             self.get_name(),
             self.get_age(),
             self.get_gender(),
-            self.get_condition()
         );
         match self {
             Person::Doctor(d) => {
                 result.push_str(&format!("Specialty: {:?}\n", d.get_specialty()));
             }
             Person::Patient(p) => {
-                result.push_str(&format!("Notes: {:?}\n", p.get_notes()));
+                result.push_str(&format!("Notes: {:?}\nCondition: {:?}", p.get_notes(), p.get_condition()));
             }
         }
         write!(f, "{result}")
@@ -89,7 +73,6 @@ pub struct PersonS<T> {
     name: String,
     age: i32,
     gender: Gender,
-    condition: Condition,
     kind: T,
 
     mrn: MRN,
@@ -100,14 +83,12 @@ impl<T> PersonS<T> {
         name: String,
         age: i32,
         gender: Gender,
-        condition: Condition,
         kind: T,
     ) -> Result<Self, String> {
         Ok(PersonS {
             name,
             age,
             gender,
-            condition,
             kind,
             mrn: NUM_GEN
                 .lock()

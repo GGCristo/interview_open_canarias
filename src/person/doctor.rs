@@ -30,7 +30,6 @@ impl Doctor {
             name,
             age,
             gender,
-            super::Condition::Employee,
             Doctor { specialty },
         )?))
     }

@@ -1,40 +1,44 @@
 mod waiting_list;
-use crate::person::Person;
-use std::collections::{
-    hash_map::Entry::{Occupied, Vacant},
-    HashMap,
-};
+use crate::person::{patient, Person};
+use std::collections::{hash_map::Entry, HashMap};
 use std::fmt;
-use waiting_list::QueueStrategy;
+use waiting_list::{QueueI, SortStrategy};
 
 // Medical Registry Number
 pub use String as MRN;
 
-pub struct Registry<WaitingList = waiting_list::SortStrategy<Person>> {
+pub struct Registry<WaitingList = SortStrategy<(MRN, patient::Condition)>> {
     registry: HashMap<MRN, Person>,
     waiting_list: WaitingList,
 }
 
-pub fn new() -> Registry {
-    Registry {
-        registry: HashMap::new(),
-        waiting_list: QueueStrategy::new(|p1: &Person, p2: &Person| -> bool {
-            p1.get_age() < p2.get_age()
-        }),
-    }
-}
-
 impl Registry {
+    pub fn new() -> Self {
+        Self {
+            registry: HashMap::new(),
+            waiting_list: QueueI::new(|&(_, p1_condition), &(_, p2_condition)| -> bool {
+                p1_condition < p2_condition
+            }),
+        }
+    }
     pub fn add(&mut self, person: Person) -> Result<&Person, String> {
         match self.registry.entry(person.get_mrn().clone()) {
-            Vacant(v) => Ok(v.insert(person)),
-            Occupied(o) => Err(format!(
+            Entry::Vacant(v) => {
+                let person = v.insert(person);
+                if let Person::Patient(patient) = &person {
+                    self.waiting_list
+                        .insert((person.get_mrn().to_string(), patient.get_condition()));
+                }
+                Ok(person)
+            }
+            Entry::Occupied(o) => Err(format!(
                 "There is already a person registered with that identifier, {}",
                 o.key(),
             )),
         }
     }
     pub fn remove(&mut self, mrn: &MRN) -> Result<Person, String> {
+        let _ = self.waiting_list.remove_one_by(|(i_mrn, _)| i_mrn == mrn);
         match self.registry.remove(mrn) {
             Some(p) => Ok(p),
             None => Err(format!("No one is registered with MRN {mrn}")),
@@ -45,9 +49,8 @@ impl Registry {
     }
     pub fn find_by_name(&self, name: &String) -> Vec<&Person> {
         self.registry
-            .iter()
-            .filter(|(_, person)| person.get_name() != name)
-            .map(|(_, person)| person)
+            .values()
+            .filter(|person| person.get_name() != name)
             .collect()
     }
 }
