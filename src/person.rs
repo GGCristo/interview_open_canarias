@@ -3,7 +3,7 @@ pub mod patient;
 
 use crate::registry::MRN;
 use crate::utils::num_generator::NumGenerator;
-use once_cell::sync::Lazy;
+use once_cell::sync::Lazy; // Until LazyLock is stable https://doc.rust-lang.org/std/sync/struct.LazyLock.html
 use std::fmt;
 use std::sync::Mutex;
 
@@ -23,45 +23,45 @@ pub enum Condition {
     CriticalCondition,
 }
 
-pub enum PersonEnum {
-    Patient(Person<patient::Patient>),
-    Doctor(Person<doctor::Doctor>),
+pub enum Person {
+    Patient(PersonS<patient::Patient>),
+    Doctor(PersonS<doctor::Doctor>),
 }
 
-impl PersonEnum {
+impl Person {
     pub fn get_name(&self) -> &String {
         match self {
-            PersonEnum::Patient(p) => &p.name,
-            PersonEnum::Doctor(d) => &d.name,
+            Person::Patient(p) => &p.name,
+            Person::Doctor(d) => &d.name,
         }
     }
     pub fn get_age(&self) -> i32 {
         match self {
-            PersonEnum::Patient(p) => p.age,
-            PersonEnum::Doctor(d) => d.age,
+            Person::Patient(p) => p.age,
+            Person::Doctor(d) => d.age,
         }
     }
     pub fn get_gender(&self) -> Gender {
         match self {
-            PersonEnum::Patient(p) => p.gender,
-            PersonEnum::Doctor(d) => d.gender,
+            Person::Patient(p) => p.gender,
+            Person::Doctor(d) => d.gender,
         }
     }
     pub fn get_condition(&self) -> Condition {
         match self {
-            PersonEnum::Patient(p) => p.condition,
-            PersonEnum::Doctor(d) => d.condition,
+            Person::Patient(p) => p.condition,
+            Person::Doctor(d) => d.condition,
         }
     }
     pub fn get_mrn(&self) -> &MRN {
         match self {
-            PersonEnum::Patient(p) => &p.mrn,
-            PersonEnum::Doctor(d) => &d.mrn,
+            Person::Patient(p) => &p.mrn,
+            Person::Doctor(d) => &d.mrn,
         }
     }
 }
 
-impl fmt::Display for PersonEnum {
+impl fmt::Display for Person {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut result = format!(
             "MRN: {}\nName: {}\nAge: {}\nGender: {:?}\nCondition: {:?}\n",
@@ -72,10 +72,10 @@ impl fmt::Display for PersonEnum {
             self.get_condition()
         );
         match self {
-            PersonEnum::Doctor(d) => {
+            Person::Doctor(d) => {
                 result.push_str(&format!("Specialty: {:?}\n", d.get_specialty()));
             }
-            PersonEnum::Patient(p) => {
+            Person::Patient(p) => {
                 result.push_str(&format!("Notes: {:?}\n", p.get_notes()));
             }
         }
@@ -85,7 +85,7 @@ impl fmt::Display for PersonEnum {
 
 static NUM_GEN: Lazy<Mutex<NumGenerator>> = Lazy::new(|| Mutex::new(NumGenerator::default()));
 
-pub struct Person<T> {
+pub struct PersonS<T> {
     name: String,
     age: i32,
     gender: Gender,
@@ -95,7 +95,7 @@ pub struct Person<T> {
     mrn: MRN,
 }
 
-impl<T> Person<T> {
+impl<T> PersonS<T> {
     fn new(
         name: String,
         age: i32,
@@ -103,7 +103,7 @@ impl<T> Person<T> {
         condition: Condition,
         kind: T,
     ) -> Result<Self, String> {
-        Ok(Person {
+        Ok(PersonS {
             name,
             age,
             gender,
@@ -118,7 +118,7 @@ impl<T> Person<T> {
     }
 }
 
-impl<T> Drop for Person<T> {
+impl<T> Drop for PersonS<T> {
     fn drop(&mut self) {
         NUM_GEN.lock().unwrap().free(self.mrn.clone());
     }

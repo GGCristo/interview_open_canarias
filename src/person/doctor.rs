@@ -25,8 +25,8 @@ impl Doctor {
         age: i32,
         gender: super::Gender,
         specialty: Specialty,
-    ) -> Result<super::PersonEnum, String> {
-        Ok(super::PersonEnum::Doctor(super::Person::new(
+    ) -> Result<super::Person, String> {
+        Ok(super::Person::Doctor(super::PersonS::new(
             name,
             age,
             gender,
@@ -36,7 +36,7 @@ impl Doctor {
     }
 }
 
-impl super::Person<Doctor> {
+impl super::PersonS<Doctor> {
     pub fn get_specialty(&self) -> Specialty {
         self.kind.specialty
     }

@@ -1,25 +1,31 @@
-use crate::person::PersonEnum;
+mod waiting_list;
+use crate::person::Person;
 use std::collections::{
     hash_map::Entry::{Occupied, Vacant},
     HashMap,
 };
 use std::fmt;
+use waiting_list::QueueStrategy;
 
 // Medical Registry Number
 pub use String as MRN;
 
-pub struct Registry {
-    registry: HashMap<MRN, PersonEnum>,
+pub struct Registry<WaitingList = waiting_list::SortStrategy<Person>> {
+    registry: HashMap<MRN, Person>,
+    waiting_list: WaitingList,
 }
 
 pub fn new() -> Registry {
     Registry {
         registry: HashMap::new(),
+        waiting_list: QueueStrategy::new(|p1: &Person, p2: &Person| -> bool {
+            p1.get_age() < p2.get_age()
+        }),
     }
 }
 
 impl Registry {
-    pub fn add(&mut self, person: PersonEnum) -> Result<&PersonEnum, String> {
+    pub fn add(&mut self, person: Person) -> Result<&Person, String> {
         match self.registry.entry(person.get_mrn().clone()) {
             Vacant(v) => Ok(v.insert(person)),
             Occupied(o) => Err(format!(
@@ -28,16 +34,16 @@ impl Registry {
             )),
         }
     }
-    pub fn remove(&mut self, mrn: &MRN) -> Result<PersonEnum, String> {
+    pub fn remove(&mut self, mrn: &MRN) -> Result<Person, String> {
         match self.registry.remove(mrn) {
             Some(p) => Ok(p),
             None => Err(format!("No one is registered with MRN {mrn}")),
         }
     }
-    pub fn find(&self, mrn: &MRN) -> Option<&PersonEnum> {
+    pub fn find(&self, mrn: &MRN) -> Option<&Person> {
         self.registry.get(mrn)
     }
-    pub fn find_by_name(&self, name: &String) -> Vec<&PersonEnum> {
+    pub fn find_by_name(&self, name: &String) -> Vec<&Person> {
         self.registry
             .iter()
             .filter(|(_, person)| person.get_name() != name)
