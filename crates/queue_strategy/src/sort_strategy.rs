@@ -1,24 +1,11 @@
-pub trait QueueI {
-    type Element; // TODO associated type vs generics
-    fn new(lt: fn(&Self::Element, &Self::Element) -> bool) -> Self;
-    fn insert(&mut self, element: Self::Element);
-    fn remove(&mut self, element: &Self::Element) -> Result<Self::Element, String>;
-    fn remove_by<F>(&mut self, strategy: F) -> Result<Vec<Self::Element>, String>
-    where
-        F: Fn(&Self::Element) -> bool;
-    fn remove_one_by<F>(&mut self, strategy: F) -> Result<Self::Element, String>
-    where
-        F: Fn(&Self::Element) -> bool;
-    fn pick(&mut self) -> Option<Self::Element>;
-    fn peek(&self) -> Option<&Self::Element>;
-}
+use std::fmt;
 
-pub struct SortStrategy<T: PartialEq> {
+pub struct SortStrategy<T: PartialEq + fmt::Debug> {
     container: Vec<T>,
     lt: fn(&T, &T) -> bool,
 }
 
-impl<T: PartialEq> QueueI for SortStrategy<T> {
+impl<T: PartialEq + fmt::Debug> super::QueueI for SortStrategy<T> {
     type Element = T;
     fn new(lt: fn(&T, &T) -> bool) -> Self {
         Self {
@@ -26,9 +13,10 @@ impl<T: PartialEq> QueueI for SortStrategy<T> {
             lt,
         }
     }
-    fn insert(&mut self, element: T) {
+    fn insert(&mut self, element: T) -> &T {
         let idx = self.container.partition_point(|x| (self.lt)(x, &element));
         self.container.insert(idx, element);
+        &self.container[idx]
     }
     fn remove(&mut self, element: &T) -> Result<T, String> {
         let idx = self.container.iter().position(|e| e == element);
@@ -63,6 +51,16 @@ impl<T: PartialEq> QueueI for SortStrategy<T> {
     }
     fn peek(&self) -> Option<&T> {
         self.container.last()
+    }
+}
+
+impl<T: PartialEq + fmt::Debug> fmt::Display for SortStrategy<T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut result = String::new();
+        for i in (0..self.container.len()).rev() {
+            result.push_str(&format!("- {:#?}", self.container[i]));
+        }
+        write!(f, "{result}")
     }
 }
 

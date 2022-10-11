@@ -1,8 +1,8 @@
-mod waiting_list;
 use crate::person::{patient, Person};
+use queue_strategy::{QueueI, sort_strategy::SortStrategy};
 use std::collections::{hash_map::Entry, HashMap};
 use std::fmt;
-use waiting_list::{QueueI, SortStrategy};
+// use waiting_list::{QueueI, SortStrategy};
 
 // Medical Registry Number
 pub use String as MRN;
@@ -58,12 +58,14 @@ impl Registry {
 impl fmt::Display for Registry {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let delimeter = String::from("\n-----------------\n");
-        let mut result = String::with_capacity(delimeter.capacity() * 2);
+        let mut head = String::from("- List -");
+        let mut result = String::with_capacity(delimeter.capacity() * 2 + head.capacity() * 2);
         for (_, person_enum) in self.registry.iter() {
             result.push_str(&delimeter);
             result.push_str(&format!("{person_enum}"));
             result.push_str(&delimeter);
         }
-        write!(f, "{result}")
+        result.push_str("- Waiting List -");
+        write!(f, "{result}\n{}", self.waiting_list)
     }
 }

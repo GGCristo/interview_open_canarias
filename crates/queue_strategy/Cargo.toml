@@ -1,10 +1,8 @@
 [package]
-name = "interview2"
+name = "queue_strategy"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-once_cell = "1.15.0"
-queue_strategy = {path = "crates/queue_strategy"}
