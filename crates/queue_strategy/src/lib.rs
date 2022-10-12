@@ -1,17 +1,19 @@
 pub mod sort_strategy;
+pub mod heap_strategy;
+
 use std::fmt;
 
-pub trait QueueI: fmt::Display {
-    type Element; // TODO associated type vs generics
-    fn new(lt: fn(&Self::Element, &Self::Element) -> bool) -> Self;
-    fn insert(&mut self, element: Self::Element) -> &Self::Element;
-    fn remove(&mut self, element: &Self::Element) -> Result<Self::Element, String>;
-    fn remove_by<F>(&mut self, strategy: F) -> Result<Vec<Self::Element>, String>
+pub trait QueueI<T>: fmt::Debug {
+    // type Element; // TODO associated type vs generics
+    // fn new(lt: fn(&T, &T) -> bool) -> Self;
+    fn insert(&mut self, element: T) -> &T;
+    fn remove(&mut self, element: &T) -> Result<T, String>;
+    fn remove_by<F>(&mut self, strategy: F) -> Result<Vec<T>, String>
     where
-        F: Fn(&Self::Element) -> bool;
-    fn remove_one_by<F>(&mut self, strategy: F) -> Result<Self::Element, String>
+        F: Fn(&T) -> bool;
+    fn remove_one_by<F>(&mut self, strategy: F) -> Result<T, String>
     where
-        F: Fn(&Self::Element) -> bool;
-    fn pick(&mut self) -> Option<Self::Element>;
-    fn peek(&self) -> Option<&Self::Element>;
+        F: Fn(&T) -> bool;
+    fn pick(&mut self) -> Option<T>;
+    fn peek(&self) -> Option<&T>;
 }

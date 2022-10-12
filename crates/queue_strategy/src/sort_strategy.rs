@@ -1,18 +1,20 @@
 use std::fmt;
 
-pub struct SortStrategy<T: PartialEq + fmt::Debug> {
+pub struct SortStrategy<T: PartialEq> {
     container: Vec<T>,
     lt: fn(&T, &T) -> bool,
 }
 
-impl<T: PartialEq + fmt::Debug> super::QueueI for SortStrategy<T> {
-    type Element = T;
-    fn new(lt: fn(&T, &T) -> bool) -> Self {
+impl<T: PartialEq> SortStrategy<T> {
+    pub fn new(lt: fn(&T, &T) -> bool) -> Self {
         Self {
             container: Vec::new(),
             lt,
         }
     }
+}
+
+impl<T: PartialEq + fmt::Debug> super::QueueI<T> for SortStrategy<T> {
     fn insert(&mut self, element: T) -> &T {
         let idx = self.container.partition_point(|x| (self.lt)(x, &element));
         self.container.insert(idx, element);
@@ -54,7 +56,7 @@ impl<T: PartialEq + fmt::Debug> super::QueueI for SortStrategy<T> {
     }
 }
 
-impl<T: PartialEq + fmt::Debug> fmt::Display for SortStrategy<T> {
+impl<T: PartialEq + fmt::Debug> fmt::Debug for SortStrategy<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut result = String::new();
         for i in (0..self.container.len()).rev() {
@@ -63,15 +65,3 @@ impl<T: PartialEq + fmt::Debug> fmt::Display for SortStrategy<T> {
         write!(f, "{result}")
     }
 }
-
-// pub struct HeapStrategy<T: Ord> {
-//     container: BinaryHeap<T>,
-// }
-//
-// impl<T: Ord> Default for HeapStrategy<T> {
-//     fn default() -> Self {
-//         Self {
-//             container: BinaryHeap::new(),
-//         }
-//     }
-// }

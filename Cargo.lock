@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "interview2"
+name = "interview_open_canarias"
 version = "0.1.0"
 dependencies = [
  "once_cell",

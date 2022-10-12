@@ -1,26 +1,44 @@
 use crate::person::{patient, Person};
-use queue_strategy::{QueueI, sort_strategy::SortStrategy};
+use queue_strategy::{heap_strategy::HeapStrategy, sort_strategy::SortStrategy, QueueI};
+use std::cmp::Ordering;
 use std::collections::{hash_map::Entry, HashMap};
 use std::fmt;
-// use waiting_list::{QueueI, SortStrategy};
 
 // Medical Registry Number
 pub use String as MRN;
 
-pub struct Registry<WaitingList = SortStrategy<(MRN, patient::Condition)>> {
+pub type WlElement = (MRN, patient::Condition);
+pub struct Registry<T = SortStrategy<WlElement>>
+where
+    T: QueueI<WlElement>,
+{
     registry: HashMap<MRN, Person>,
-    waiting_list: WaitingList,
+    waiting_list: T,
 }
 
-impl Registry {
+impl Registry<SortStrategy<WlElement>> {
     pub fn new() -> Self {
         Self {
             registry: HashMap::new(),
-            waiting_list: QueueI::new(|&(_, p1_condition), &(_, p2_condition)| -> bool {
+            waiting_list: SortStrategy::new(|&(_, p1_condition), &(_, p2_condition)| -> bool {
                 p1_condition < p2_condition
             }),
         }
     }
+}
+
+impl Registry<HeapStrategy<WlElement>> {
+    pub fn new() -> Self {
+        Self {
+            registry: HashMap::new(),
+            waiting_list: HeapStrategy::new(|&(_, p1_condition), &(_, p2_condition)| -> Ordering {
+                p1_condition.cmp(&p2_condition)
+            }),
+        }
+    }
+}
+
+impl<WaitingList: QueueI<WlElement>> Registry<WaitingList> {
     pub fn add(&mut self, person: Person) -> Result<&Person, String> {
         match self.registry.entry(person.get_mrn().clone()) {
             Entry::Vacant(v) => {
@@ -55,17 +73,17 @@ impl Registry {
     }
 }
 
-impl fmt::Display for Registry {
+impl<WaitingList: QueueI<WlElement>> fmt::Display for Registry<WaitingList> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let delimeter = String::from("\n-----------------\n");
-        let mut head = String::from("- List -");
+        let head = String::from("- List -");
         let mut result = String::with_capacity(delimeter.capacity() * 2 + head.capacity() * 2);
         for (_, person_enum) in self.registry.iter() {
             result.push_str(&delimeter);
             result.push_str(&format!("{person_enum}"));
             result.push_str(&delimeter);
         }
-        result.push_str("- Waiting List -");
-        write!(f, "{result}\n{}", self.waiting_list)
+        // result.push_str("- Waiting List -");
+        write!(f, "{result}- Waiting List -\n{:?}", self.waiting_list)
     }
 }

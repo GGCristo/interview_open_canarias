@@ -60,7 +60,11 @@ impl fmt::Display for Person {
                 result.push_str(&format!("Specialty: {:?}\n", d.get_specialty()));
             }
             Person::Patient(p) => {
-                result.push_str(&format!("Notes: {:?}\nCondition: {:?}", p.get_notes(), p.get_condition()));
+                result.push_str(&format!(
+                    "Notes: {:?}\nCondition: {:?}",
+                    p.get_notes(),
+                    p.get_condition()
+                ));
             }
         }
         write!(f, "{result}")
@@ -79,12 +83,7 @@ pub struct PersonS<T> {
 }
 
 impl<T> PersonS<T> {
-    fn new(
-        name: String,
-        age: i32,
-        gender: Gender,
-        kind: T,
-    ) -> Result<Self, String> {
+    fn new(name: String, age: i32, gender: Gender, kind: T) -> Result<Self, String> {
         Ok(PersonS {
             name,
             age,

@@ -2,12 +2,15 @@ mod person;
 mod registry;
 mod utils;
 
-use person::{doctor::{self, Doctor}, patient::{self, Patient}};
+use person::{
+    doctor::{self, Doctor},
+    patient::{self, Patient},
+};
 use registry::Registry;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut registry = Registry::new();
+    let mut registry = <Registry>::new();
     let maria = Patient::new(
         "Maria".to_string(),
         22,
