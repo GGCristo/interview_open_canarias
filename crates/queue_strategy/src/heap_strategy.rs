@@ -83,16 +83,14 @@ impl<T: PartialEq + Clone + fmt::Debug> super::QueueI<T> for HeapStrategy<T> {
         Err("Todo".to_string())
     }
     fn pick(&mut self) -> Option<T> {
-        match self.container.pop() {
-            Some(v) => Some(v.into_inner()),
-            None => None,
-        }
+        self.container
+            .pop()
+            .and_then(|wrapped| Some(wrapped.into_inner()))
     }
     fn peek(&self) -> Option<&T> {
-        match self.container.peek() {
-            Some(v) => Some(v.unwrap()),
-            None => None,
-        }
+        self.container
+            .peek()
+            .and_then(|wrapped| Some(wrapped.unwrap()))
     }
 }
 
